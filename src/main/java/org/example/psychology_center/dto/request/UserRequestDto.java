@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.example.psychology_center.util.Role;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,4 +19,7 @@ public class UserRequestDto {
     @NotBlank(message = "password not be blank")
     @Size(min = 6, max = 100, message = "password must be greater than 6")
     String password;
+
+
+
 }

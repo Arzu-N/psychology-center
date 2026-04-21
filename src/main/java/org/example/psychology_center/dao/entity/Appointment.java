@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
+
 public class Appointment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
