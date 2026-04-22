@@ -8,6 +8,8 @@ import org.example.psychology_center.dao.repository.PsychologistRepository;
 import org.example.psychology_center.dao.repository.UserRepository;
 import org.example.psychology_center.dto.request.UserRequestDto;
 import org.example.psychology_center.dto.response.AuthResponse;
+import org.example.psychology_center.exception.UserAlreadyExists;
+import org.example.psychology_center.exception.UserNotFound;
 import org.example.psychology_center.util.JwtUtil;
 import org.example.psychology_center.util.Role;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,13 +29,22 @@ private final PasswordEncoder passwordEncoder;
     public void register(UserRequestDto userDTO) {
 
         if (userRepository.existsByUserName(userDTO.getUserName())) {
-            throw new RuntimeException("User already exists");
+            throw new UserAlreadyExists("User already exists");
         }
 
         User user = new User();
         user.setUserName(userDTO.getUserName());
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         user.setRole(Role.USER);
+
+        userRepository.save(user);
+    }
+
+    public void registerAdmin(UserRequestDto userDTO) {
+        User user = new User();
+        user.setUserName(userDTO.getUserName());
+        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        user.setRole(Role.ADMIN);
 
         userRepository.save(user);
     }
@@ -48,7 +59,7 @@ private final PasswordEncoder passwordEncoder;
         );
 
         User user = userRepository.findByUserName(request.getUserName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFound("User not found"));
 
         String accessToken = jwtUtil.generateToken(
                 user.getUserName(),
@@ -73,7 +84,7 @@ private final PasswordEncoder passwordEncoder;
         }
 
         User user = userRepository.findByUserName(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFound("User not found"));
 
         String newAccessToken = jwtUtil.generateToken(
                 user.getUserName(),

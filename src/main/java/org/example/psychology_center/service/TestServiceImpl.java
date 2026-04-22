@@ -9,6 +9,8 @@ import org.example.psychology_center.dao.repository.AnswerRepository;
 import org.example.psychology_center.dao.repository.TestRepository;
 import org.example.psychology_center.dao.repository.UserRepository;
 import org.example.psychology_center.dto.request.SubmitDto;
+import org.example.psychology_center.exception.TestNotFound;
+import org.example.psychology_center.exception.UserNotFound;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,9 +23,9 @@ private final AnswerRepository answerRepository;
     @Override
     public int submitTest(SubmitDto dto) {
         Test test = testRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new RuntimeException("Test not found"));
+                .orElseThrow(() -> new TestNotFound("Test not found"));
         User user = userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFound("User not found"));
        int totalScore= answerRepository.findAllById(dto.getAnswerIds()).stream()
                 .mapToInt(Answer::getScore)
                 .sum();

@@ -17,6 +17,7 @@ public class UserMapperImpl implements UserMapper{
     public User toUserEntity(UserRequestDto dto) {
        return User.builder()
                 .userName(dto.getUserName())
+               .fullName(dto.getUserName()+" "+dto.getSurname())
                 .password(dto.getPassword())
                 .role(Role.USER)
                 .build();

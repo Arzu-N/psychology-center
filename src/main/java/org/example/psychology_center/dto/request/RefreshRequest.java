@@ -1,5 +1,6 @@
 package org.example.psychology_center.dto.request;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,5 +13,6 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 public class RefreshRequest {
+    @NotNull
     private String refreshToken;
 }
