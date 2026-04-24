@@ -33,11 +33,11 @@ public class SecurityConfiguration {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        // 🔥 AUTH endpoints hamıya açıq
+
                         .requestMatchers(request -> request.getServletPath()
                                 .startsWith("/auth/")).permitAll()
 
-                        // 🔥 ROLE mapping düzgün format
+
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/psychologist/**").hasAnyRole("ADMIN", "USER")
                         .requestMatchers("/notification/**").hasAnyRole("USER", "ADMIN")
@@ -45,7 +45,7 @@ public class SecurityConfiguration {
                         // fallback
                         .anyRequest().authenticated()
                 )
-                // 🔥 JWT filter
+
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
