@@ -17,6 +17,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService{
@@ -26,6 +28,8 @@ public class AuthServiceImpl implements AuthService{
 private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final RefreshTokenService refreshTokenService;
+    private final NotificationService notificationService;
+
     public void register(UserRequestDto userDTO) {
 
         if (userRepository.existsByUserName(userDTO.getUserName())) {
@@ -35,18 +39,41 @@ private final PasswordEncoder passwordEncoder;
         User user = new User();
         user.setUserName(userDTO.getUserName());
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        user.setRole(Role.USER);
+        user.setRole(Role.ROLE_USER);
 
         userRepository.save(user);
-    }
 
+// user notification
+        notificationService.sendNotification(user, "Qeydiyyat uğurla tamamlandı");
+
+// admin notification
+
+        List<User> admins = userRepository.findByRole(Role.ROLE_ADMIN);
+
+        for (User admin : admins) {
+            notificationService.sendNotification(
+                    admin,
+                    "Yeni user qeydiyyatdan keçdi: " + user.getUserName()
+            );
+        }}
     public void registerAdmin(UserRequestDto userDTO) {
         User user = new User();
         user.setUserName(userDTO.getUserName());
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        user.setRole(Role.ADMIN);
-
+        user.setRole(Role.ROLE_ADMIN);
         userRepository.save(user);
+        notificationService.sendNotification(
+                user,
+                "Sizə admin hüquqları verildi"
+        );
+        List<User> admins = userRepository.findByRole(Role.ROLE_ADMIN);
+
+        for (User admin : admins) {
+            notificationService.sendNotification(
+                    admin,
+                    "Yeni admin əlavə olundu: " + user.getUserName()
+            );
+        }
     }
 
     public AuthResponse login(UserRequestDto request) {

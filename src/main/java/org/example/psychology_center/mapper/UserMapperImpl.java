@@ -19,7 +19,7 @@ public class UserMapperImpl implements UserMapper{
                 .userName(dto.getUserName())
                .fullName(dto.getUserName()+" "+dto.getSurname())
                 .password(dto.getPassword())
-                .role(Role.USER)
+                .role(Role.ROLE_USER)
                 .build();
     }
 

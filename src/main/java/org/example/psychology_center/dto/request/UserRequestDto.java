@@ -1,5 +1,6 @@
 package org.example.psychology_center.dto.request;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -21,6 +22,8 @@ public class UserRequestDto {
     @NotBlank(message = "password not be blank")
     @Size(min = 6, max = 100, message = "password must be greater than 6")
     String password;
+    @Email
+    String email;
 
 
 

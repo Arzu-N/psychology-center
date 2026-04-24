@@ -18,37 +18,50 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+
+
 public class SecurityConfiguration {
 
-        private final JwtFilter jwtFilter;
+    private final JwtFilter jwtFilter;
 
-        @Bean
-        public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
-            http
-                    .csrf(csrf -> csrf.disable())
-                    .sessionManagement(session ->
-                            session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                    )
-                    .authorizeHttpRequests(auth -> auth
-                            .requestMatchers("/auth/**").permitAll()
-                            .requestMatchers("/admin/**").hasRole("ADMIN")
-                            .requestMatchers("/psychologist/**").hasAnyRole("ADMIN", "USER")
-                            .anyRequest().authenticated()
-                    )
-                    .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-
-
-            return http.build();
-        }
-
-        @Bean
-        public PasswordEncoder passwordEncoder() {
-            return new BCryptPasswordEncoder();
-        }
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+        http
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .authorizeHttpRequests(auth -> auth
+                        // 🔥 AUTH endpoints hamıya açıq
+                        .requestMatchers(request -> request.getServletPath()
+                                .startsWith("/auth/")).permitAll()
+
+                        // 🔥 ROLE mapping düzgün format
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/psychologist/**").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers("/notification/**").hasAnyRole("USER", "ADMIN")
+
+                        // fallback
+                        .anyRequest().authenticated()
+                )
+                // 🔥 JWT filter
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration configuration
+    ) throws Exception {
         return configuration.getAuthenticationManager();
-    }}
+    }
+}
 
 
