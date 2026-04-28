@@ -6,6 +6,7 @@ import org.example.psychology_center.dto.request.RefreshRequest;
 import org.example.psychology_center.dto.request.UserRequestDto;
 import org.example.psychology_center.dto.response.AuthResponse;
 import org.example.psychology_center.service.AuthService;
+import org.example.psychology_center.util.Role;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +29,14 @@ private final AuthService service;
     @PostMapping("/refresh")
     public AuthResponse refresh(@RequestBody RefreshRequest request) {
         return service.refreshToken(request.getRefreshToken());
+    }
+
+    @PutMapping("/admin/users/{id}/role")
+    public ResponseEntity<String> changeRole(
+            @PathVariable Long id,
+            @RequestParam Role role) {
+        service.changeRole(id, role);
+        return ResponseEntity.ok("Role updated");
     }
 
 }

@@ -14,8 +14,7 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 public class AppointmentRequestDto {
-    @NotNull
-    Long userId;
+
     @NotNull
     Long psychologistId;
     @NotNull

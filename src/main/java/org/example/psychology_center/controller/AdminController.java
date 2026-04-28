@@ -21,9 +21,5 @@ public class AdminController {
         authService.register(request);
     }
 
-    @PostMapping("/create-admin")
-    public void createAdmin(@RequestBody UserRequestDto request) {
 
-        authService.registerAdmin(request);
-    }
 }

@@ -1,11 +1,13 @@
 package org.example.psychology_center.mapper;
 
 import lombok.RequiredArgsConstructor;
+import org.example.psychology_center.config.CustomUserDetails;
 import org.example.psychology_center.dao.entity.Appointment;
 import org.example.psychology_center.dao.repository.PsychologistRepository;
 import org.example.psychology_center.dao.repository.UserRepository;
 import org.example.psychology_center.dto.request.AppointmentRequestDto;
 import org.example.psychology_center.dto.response.AppointmentResponseDto;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,8 +18,9 @@ public class AppointmentMapperImpl implements AppointmentMapper {
 
     @Override
     public Appointment toAppointmentDto(AppointmentRequestDto dto) {
-       return Appointment.builder()
-                .user(userRepository.findById(dto.getUserId())
+        CustomUserDetails principal = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return Appointment.builder()
+                .user(userRepository.findById(principal.getId())
                         .orElseThrow(()->new RuntimeException("User not found")))
                 .psychologist(psychologistRepository.findById(dto.getPsychologistId())
                         .orElseThrow(()->new RuntimeException("Psychologist not found")))

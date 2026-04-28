@@ -6,7 +6,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.ServletWebRequest;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,9 +24,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(map);
     }
 
-    @ExceptionHandler(NotFoundPsychologist.class)
+    @ExceptionHandler(NotFound.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<?>handle(RuntimeException ex){
-       return ResponseEntity.badRequest().body(ex.getMessage());
+    public ResponseEntity<ExceptionDto>handle(RuntimeException ex, ServletWebRequest request){
+        ExceptionDto exceptionDto = new ExceptionDto(ex.getMessage(), LocalDateTime.now(),
+                request.getRequest().getRequestURI(),400);
+        return ResponseEntity.badRequest().body(exceptionDto);
     }
 }

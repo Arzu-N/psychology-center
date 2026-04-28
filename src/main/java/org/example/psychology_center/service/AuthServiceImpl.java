@@ -2,14 +2,12 @@ package org.example.psychology_center.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.psychology_center.config.AppConfig;
-import org.example.psychology_center.dao.entity.Psychologist;
 import org.example.psychology_center.dao.entity.User;
-import org.example.psychology_center.dao.repository.PsychologistRepository;
 import org.example.psychology_center.dao.repository.UserRepository;
 import org.example.psychology_center.dto.request.UserRequestDto;
 import org.example.psychology_center.dto.response.AuthResponse;
-import org.example.psychology_center.exception.UserAlreadyExists;
-import org.example.psychology_center.exception.UserNotFound;
+import org.example.psychology_center.exception.AlreadyExists;
+import org.example.psychology_center.exception.NotFound;
 import org.example.psychology_center.util.JwtUtil;
 import org.example.psychology_center.util.Role;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,7 +31,7 @@ private final PasswordEncoder passwordEncoder;
     public void register(UserRequestDto userDTO) {
 
         if (userRepository.existsByUserName(userDTO.getUserName())) {
-            throw new UserAlreadyExists("User already exists");
+            throw new AlreadyExists("User already exists");
         }
 
         User user = new User();
@@ -42,39 +40,11 @@ private final PasswordEncoder passwordEncoder;
         user.setRole(Role.ROLE_USER);
 
         userRepository.save(user);
-
-// user notification
+        // user notification
         notificationService.sendNotification(user, "Qeydiyyat uğurla tamamlandı");
+        sendNotification(user);
+}
 
-// admin notification
-
-        List<User> admins = userRepository.findByRole(Role.ROLE_ADMIN);
-
-        for (User admin : admins) {
-            notificationService.sendNotification(
-                    admin,
-                    "Yeni user qeydiyyatdan keçdi: " + user.getUserName()
-            );
-        }}
-    public void registerAdmin(UserRequestDto userDTO) {
-        User user = new User();
-        user.setUserName(userDTO.getUserName());
-        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        user.setRole(Role.ROLE_ADMIN);
-        userRepository.save(user);
-        notificationService.sendNotification(
-                user,
-                "Sizə admin hüquqları verildi"
-        );
-        List<User> admins = userRepository.findByRole(Role.ROLE_ADMIN);
-
-        for (User admin : admins) {
-            notificationService.sendNotification(
-                    admin,
-                    "Yeni admin əlavə olundu: " + user.getUserName()
-            );
-        }
-    }
 
     public AuthResponse login(UserRequestDto request) {
 
@@ -86,7 +56,7 @@ private final PasswordEncoder passwordEncoder;
         );
 
         User user = userRepository.findByUserName(request.getUserName())
-                .orElseThrow(() -> new UserNotFound("User not found"));
+                .orElseThrow(() -> new NotFound("User not found"));
 
         String accessToken = jwtUtil.generateToken(
                 user.getUserName(),
@@ -111,7 +81,7 @@ private final PasswordEncoder passwordEncoder;
         }
 
         User user = userRepository.findByUserName(username)
-                .orElseThrow(() -> new UserNotFound("User not found"));
+                .orElseThrow(() -> new NotFound("User not found"));
 
         String newAccessToken = jwtUtil.generateToken(
                 user.getUserName(),
@@ -123,6 +93,31 @@ private final PasswordEncoder passwordEncoder;
                 .refreshToken(refreshToken)
                 .tokenType("Bearer")
                 .build();
+    }
+    public void sendNotification(User user){
+
+
+
+// admin notification
+
+        List<User> admins = userRepository.findByRole(Role.ROLE_ADMIN);
+
+        for (User admin : admins) {
+            notificationService.sendNotification(
+                    admin,
+                    "Yeni user qeydiyyatdan keçdi: " + user.getUserName()
+            );
+        }
+    }
+
+    public void changeRole(Long userId, Role role) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFound("User not found"));
+
+        user.setRole(role);
+
+        userRepository.save(user);
     }
 }
 

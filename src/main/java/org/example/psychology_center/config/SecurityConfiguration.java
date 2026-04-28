@@ -37,8 +37,8 @@ public class SecurityConfiguration {
                         .requestMatchers(request -> request.getServletPath()
                                 .startsWith("/auth/")).permitAll()
 
-
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/superadmin/**").hasRole("SUPERADMIN")
+                        .requestMatchers("/admin/**").hasAnyRole("ADMIN","SUPERADMIN")
                         .requestMatchers("/psychologist/**").hasAnyRole("ADMIN", "USER")
                         .requestMatchers("/notification/**").hasAnyRole("USER", "ADMIN")
 

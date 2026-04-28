@@ -5,7 +5,7 @@ import org.example.psychology_center.dao.entity.Psychologist;
 import org.example.psychology_center.dao.repository.PsychologistRepository;
 import org.example.psychology_center.dto.request.PsychologistRequestDto;
 import org.example.psychology_center.dto.response.PsychologistResponseDto;
-import org.example.psychology_center.exception.NotFoundPsychologist;
+import org.example.psychology_center.exception.NotFound;
 import org.example.psychology_center.mapper.PsychologistMapper;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +31,7 @@ private final PsychologistMapper mapper;
     @Override
     public PsychologistResponseDto getPsychologistById(Long id) {
        return mapper.toPsychologistResponseDto(psychologistRepository.findById(id).orElseThrow(()->
-                new NotFoundPsychologist("Not found Psychologist")));
+                new NotFound("Not found Psychologist")));
     }
 
     @Override
