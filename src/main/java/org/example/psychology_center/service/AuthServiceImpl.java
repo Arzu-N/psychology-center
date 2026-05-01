@@ -5,6 +5,7 @@ import org.example.psychology_center.config.AppConfig;
 import org.example.psychology_center.dao.entity.User;
 import org.example.psychology_center.dao.repository.UserRepository;
 import org.example.psychology_center.dto.request.LoginRequestDto;
+import org.example.psychology_center.dto.request.RegisterRequest;
 import org.example.psychology_center.dto.request.UserRequestDto;
 import org.example.psychology_center.dto.response.AuthResponse;
 import org.example.psychology_center.exception.AlreadyExistsException;
@@ -28,23 +29,19 @@ private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final RefreshTokenService refreshTokenService;
     private final NotificationService notificationService;
+private final OtpService otpService;
+    public void register(RegisterRequest request) {
 
-    public void register(UserRequestDto userDTO) {
-
-        if (userRepository.existsByUserName(userDTO.getUserName())) {
-            throw new AlreadyExistsException("User already exists");
+        if (!otpService.isVerified(request.getEmail())) {
+            throw new RuntimeException("Email təsdiqlənməyib");
         }
 
         User user = new User();
-        user.setUserName(userDTO.getUserName());
-        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        user.setRole(Role.ROLE_USER);
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         userRepository.save(user);
-        // user notification
-        notificationService.sendNotification(user, "Qeydiyyat uğurla tamamlandı");
-        sendNotification(user);
-}
+    }
 
 
     public AuthResponse login(LoginRequestDto request) {

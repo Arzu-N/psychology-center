@@ -1,8 +1,12 @@
 package org.example.psychology_center.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.psychology_center.dao.entity.User;
+import org.example.psychology_center.dao.repository.UserRepository;
+import org.example.psychology_center.dto.request.RegisterRequest;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -10,6 +14,7 @@ import org.springframework.stereotype.Service;
 public class EmailService {
 
     private final JavaMailSender mailSender;
+
 
     public void sendEmail(String to, String subject, String text) {
 
@@ -20,4 +25,8 @@ public class EmailService {
 
         mailSender.send(message);
     }
+
+
+
+
 }
