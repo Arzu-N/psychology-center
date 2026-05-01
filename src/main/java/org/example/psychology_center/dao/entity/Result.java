@@ -16,8 +16,10 @@ public class Result {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     int totalScore;
+
     @ManyToOne
     User user;
-    @ManyToOne
+
+    @OneToOne
     Test test;
 }

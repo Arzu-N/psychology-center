@@ -4,10 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.example.psychology_center.config.AppConfig;
 import org.example.psychology_center.dao.entity.User;
 import org.example.psychology_center.dao.repository.UserRepository;
+import org.example.psychology_center.dto.request.LoginRequestDto;
 import org.example.psychology_center.dto.request.UserRequestDto;
 import org.example.psychology_center.dto.response.AuthResponse;
-import org.example.psychology_center.exception.AlreadyExists;
-import org.example.psychology_center.exception.NotFound;
+import org.example.psychology_center.exception.AlreadyExistsException;
+import org.example.psychology_center.exception.NotFoundException;
 import org.example.psychology_center.util.JwtUtil;
 import org.example.psychology_center.util.Role;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,7 +32,7 @@ private final PasswordEncoder passwordEncoder;
     public void register(UserRequestDto userDTO) {
 
         if (userRepository.existsByUserName(userDTO.getUserName())) {
-            throw new AlreadyExists("User already exists");
+            throw new AlreadyExistsException("User already exists");
         }
 
         User user = new User();
@@ -46,7 +47,7 @@ private final PasswordEncoder passwordEncoder;
 }
 
 
-    public AuthResponse login(UserRequestDto request) {
+    public AuthResponse login(LoginRequestDto request) {
 
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -56,7 +57,7 @@ private final PasswordEncoder passwordEncoder;
         );
 
         User user = userRepository.findByUserName(request.getUserName())
-                .orElseThrow(() -> new NotFound("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         String accessToken = jwtUtil.generateToken(
                 user.getUserName(),
@@ -81,7 +82,7 @@ private final PasswordEncoder passwordEncoder;
         }
 
         User user = userRepository.findByUserName(username)
-                .orElseThrow(() -> new NotFound("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         String newAccessToken = jwtUtil.generateToken(
                 user.getUserName(),
@@ -113,7 +114,7 @@ private final PasswordEncoder passwordEncoder;
     public void changeRole(Long userId, Role role) {
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFound("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         user.setRole(role);
 

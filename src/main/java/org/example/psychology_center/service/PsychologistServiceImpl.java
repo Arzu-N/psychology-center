@@ -5,10 +5,14 @@ import org.example.psychology_center.dao.entity.Psychologist;
 import org.example.psychology_center.dao.repository.PsychologistRepository;
 import org.example.psychology_center.dto.request.PsychologistRequestDto;
 import org.example.psychology_center.dto.response.PsychologistResponseDto;
-import org.example.psychology_center.exception.NotFound;
+import org.example.psychology_center.exception.NotFoundException;
 import org.example.psychology_center.mapper.PsychologistMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -31,7 +35,7 @@ private final PsychologistMapper mapper;
     @Override
     public PsychologistResponseDto getPsychologistById(Long id) {
        return mapper.toPsychologistResponseDto(psychologistRepository.findById(id).orElseThrow(()->
-                new NotFound("Not found Psychologist")));
+                new NotFoundException("Not found Psychologist")));
     }
 
     @Override
@@ -44,5 +48,14 @@ private final PsychologistMapper mapper;
     public List<PsychologistResponseDto>getByExperience(Integer experience){
         return psychologistRepository.findPsychologistByExperienceGreaterThanEqual(experience)
                 .stream().map(mapper::toPsychologistResponseDto).toList();
+    }
+
+    public String upload( MultipartFile file) throws IOException {
+        String originalFilename = file.getOriginalFilename();
+        if (!file.isEmpty()) System.out.printf("file not empty");
+        String path="C:\\Workspacee\\file"+originalFilename;
+        File dest = new File(path);
+        file.transferTo(dest);
+        return "file uploaded successfully "+originalFilename;
     }
 }

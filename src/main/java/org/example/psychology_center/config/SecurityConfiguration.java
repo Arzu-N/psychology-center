@@ -34,14 +34,16 @@ public class SecurityConfiguration {
                 )
                 .authorizeHttpRequests(auth -> auth
 
-                        .requestMatchers(request -> request.getServletPath()
-                                .startsWith("/auth/")).permitAll()
-
+                        .requestMatchers("/auth/**", "/cv/upload/",
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/swagger-resources/**",
+                                "/webjars/**").permitAll()
                         .requestMatchers("/superadmin/**").hasRole("SUPERADMIN")
                         .requestMatchers("/admin/**").hasAnyRole("ADMIN","SUPERADMIN")
                         .requestMatchers("/psychologist/**").hasAnyRole("ADMIN", "USER")
                         .requestMatchers("/notification/**").hasAnyRole("USER", "ADMIN")
-
                         // fallback
                         .anyRequest().authenticated()
                 )

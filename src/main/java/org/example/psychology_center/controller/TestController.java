@@ -1,10 +1,12 @@
 package org.example.psychology_center.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.example.psychology_center.config.CustomUserDetails;
 import org.example.psychology_center.dto.request.SubmitDto;
 import org.example.psychology_center.service.TestService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -13,7 +15,8 @@ import org.springframework.web.bind.annotation.*;
 public class TestController {
 private final TestService service;
     @PostMapping("/submit")
-    public ResponseEntity<Integer>submitTest(@RequestBody SubmitDto dto){
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.submitTest(dto));
+    public ResponseEntity<Integer>submitTest(@AuthenticationPrincipal CustomUserDetails userDetails
+            , @RequestBody SubmitDto dto){
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.submitTest(dto, userDetails.getId()));
     }
 }

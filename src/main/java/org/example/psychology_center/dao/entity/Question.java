@@ -17,6 +17,8 @@ public class Question {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     String text;
+
+
     @ManyToOne
     Test test;
 }

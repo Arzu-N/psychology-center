@@ -24,11 +24,23 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(map);
     }
 
-    @ExceptionHandler(NotFound.class)
+    @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ExceptionDto>handle(RuntimeException ex, ServletWebRequest request){
         ExceptionDto exceptionDto = new ExceptionDto(ex.getMessage(), LocalDateTime.now(),
                 request.getRequest().getRequestURI(),400);
+        return ResponseEntity.badRequest().body(exceptionDto);
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ExceptionDto>handleIoException(RuntimeException ex,ServletWebRequest request){
+        ExceptionDto exceptionDto = new ExceptionDto(
+                ex.getMessage(),
+                LocalDateTime.now(),
+                request.getRequest().getRequestURI(),
+                400
+        );
         return ResponseEntity.badRequest().body(exceptionDto);
     }
 }

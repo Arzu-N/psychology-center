@@ -13,7 +13,7 @@ import org.example.psychology_center.util.Role;
 @Setter
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserRequestDto {
+public class    UserRequestDto {
     @NotBlank(message = "user must not be blank ")
     @Size(min = 3, max = 30, message = "userName must be greater than 3 and less than 30")
     String userName;

@@ -13,8 +13,6 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SubmitDto {
     @NotNull
-    Long userId;
-    @NotNull
     Long testId;
     @NotNull
     List<Long> answerIds;

@@ -10,7 +10,7 @@ import org.example.psychology_center.dao.repository.PsychologistRepository;
 import org.example.psychology_center.dao.repository.UserRepository;
 import org.example.psychology_center.dto.request.AppointmentRequestDto;
 import org.example.psychology_center.dto.response.AppointmentResponseDto;
-import org.example.psychology_center.exception.NotFound;
+import org.example.psychology_center.exception.NotFoundException;
 import org.example.psychology_center.mapper.AppointmentMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -36,10 +36,10 @@ public class AppointmentServiceImpl implements AppointmentService {
                         .getPrincipal();
 
         User user = userRepository.findById(currentUser.getId())
-                .orElseThrow(() -> new NotFound("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         Psychologist psychologist = psychologistRepository.findById(dto.getPsychologistId())
-                .orElseThrow(() -> new NotFound("Psychologist not found"));
+                .orElseThrow(() -> new NotFoundException("Psychologist not found"));
 
         Appointment appointment = Appointment.builder()
                 .user(user)
@@ -63,7 +63,7 @@ public class AppointmentServiceImpl implements AppointmentService {
                         .getPrincipal();
 
         User user = userRepository.findById(currentUser.getId())
-                .orElseThrow(() -> new NotFound("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         Pageable pageable = PageRequest.of(page, size);
 

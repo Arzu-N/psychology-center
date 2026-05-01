@@ -2,6 +2,7 @@ package org.example.psychology_center.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.example.psychology_center.dto.request.LoginRequestDto;
 import org.example.psychology_center.dto.request.RefreshRequest;
 import org.example.psychology_center.dto.request.UserRequestDto;
 import org.example.psychology_center.dto.response.AuthResponse;
@@ -15,13 +16,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth/api/v1")
 public class AuthController {
 private final AuthService service;
-    @PostMapping("/register")
-    public ResponseEntity<String>register(@RequestBody @Valid UserRequestDto dto){
-        service.register(dto);
-       return ResponseEntity.ok("registr successfully");
-    }
+
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse>login(@RequestBody @Valid UserRequestDto dto){
+    public ResponseEntity<AuthResponse>login(@RequestBody @Valid LoginRequestDto dto){
         return ResponseEntity.ok(service.login(dto));
     }
 
@@ -31,7 +28,7 @@ private final AuthService service;
         return service.refreshToken(request.getRefreshToken());
     }
 
-    @PutMapping("/admin/users/{id}/role")
+    @PutMapping("/users/{id}/role")
     public ResponseEntity<String> changeRole(
             @PathVariable Long id,
             @RequestParam Role role) {

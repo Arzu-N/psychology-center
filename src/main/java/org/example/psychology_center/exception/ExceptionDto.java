@@ -7,7 +7,7 @@ public class ExceptionDto {
     LocalDateTime time;
     String path;
     int status;
-    public ExceptionDto(String message,LocalDateTime time,String path,int status){
+    public ExceptionDto(String message, LocalDateTime time, String path, int status){
         this.message=message;
         this.time=time;
         this.path=path;

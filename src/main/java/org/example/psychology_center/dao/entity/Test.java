@@ -1,11 +1,10 @@
 package org.example.psychology_center.dao.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -19,4 +18,7 @@ public class Test {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     String title;
+
+    @OneToMany(mappedBy = "test", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    List<Question> questionList;
 }

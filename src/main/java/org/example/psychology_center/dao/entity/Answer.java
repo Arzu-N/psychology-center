@@ -17,6 +17,6 @@ public class Answer {
     Long id;
     String text;
     int score;
-    @ManyToOne
+    @OneToOne
     Question question;
 }
