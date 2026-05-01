@@ -2,7 +2,10 @@ package org.example.psychology_center.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.psychology_center.dao.entity.Otp;
+import org.example.psychology_center.dao.entity.User;
 import org.example.psychology_center.dao.repository.OtpRepository;
+import org.example.psychology_center.dao.repository.UserRepository;
+import org.example.psychology_center.exception.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -14,6 +17,7 @@ public class OtpService {
 
     private final OtpRepository otpRepository;
     private final EmailService emailService;
+    private final UserRepository userRepository;
 
     public void sendOtp(String email) {
 
@@ -47,6 +51,12 @@ public class OtpService {
 
         otp.setVerified(true);
         otpRepository.save(otp);
+
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("user not found"));
+        user.setVerified(true);
+        userRepository.save(user);
+
+
     }
 
     public boolean isVerified(String email) {

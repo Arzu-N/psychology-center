@@ -21,26 +21,30 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class AuthServiceImpl implements AuthService{
+public class AuthServiceImpl implements AuthService {
     private final AppConfig config;
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
-private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final RefreshTokenService refreshTokenService;
     private final NotificationService notificationService;
-private final OtpService otpService;
-    public void register(RegisterRequest request) {
+    private final OtpService otpService;
 
-        if (!otpService.isVerified(request.getEmail())) {
-            throw new RuntimeException("Email təsdiqlənməyib");
-        }
+    public void register(RegisterRequest request) {
+        if (userRepository.existsByEmail(request.getEmail())) throw new AlreadyExistsException("already exists email");
+        if (userRepository.existsByUserName(request.getUserName()))
+            throw new AlreadyExistsException("already exists userName");
+
+
 
         User user = new User();
+        user.setUserName(request.getUserName());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-
+        user.setVerified(false);
         userRepository.save(user);
+        otpService.sendOtp(request.getEmail());
     }
 
 
@@ -92,8 +96,8 @@ private final OtpService otpService;
                 .tokenType("Bearer")
                 .build();
     }
-    public void sendNotification(User user){
 
+    public void sendNotification(User user) {
 
 
 // admin notification

@@ -23,4 +23,5 @@ public class User {
     String email;
     @Enumerated(EnumType.STRING)
     Role role;
+    boolean verified;
 }
