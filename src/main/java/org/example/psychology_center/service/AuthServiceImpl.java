@@ -30,24 +30,25 @@ public class AuthServiceImpl implements AuthService {
     private final RefreshTokenService refreshTokenService;
     private final NotificationService notificationService;
     private final OtpService otpService;
-
     public void register(RegisterRequest request) {
-        if (userRepository.existsByEmail(request.getEmail())) throw new AlreadyExistsException("already exists email");
+
+        if (userRepository.existsByEmail(request.getEmail()))
+            throw new AlreadyExistsException("already exists email");
+
         if (userRepository.existsByUserName(request.getUserName()))
             throw new AlreadyExistsException("already exists userName");
-
-
 
         User user = new User();
         user.setUserName(request.getUserName());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setVerified(false);
+
         userRepository.save(user);
-        otpService.sendOtp(request.getEmail());
+
+
+        otpService.sendOtp(user.getEmail());
     }
-
-
     public AuthResponse login(LoginRequestDto request) {
 
         authenticationManager.authenticate(
@@ -59,6 +60,10 @@ public class AuthServiceImpl implements AuthService {
 
         User user = userRepository.findByUserName(request.getUserName())
                 .orElseThrow(() -> new NotFoundException("User not found"));
+
+        if (!user.isVerified()) {
+            throw new RuntimeException("Email təsdiqlənməyib");
+        }
 
         String accessToken = jwtUtil.generateToken(
                 user.getUserName(),
@@ -100,7 +105,7 @@ public class AuthServiceImpl implements AuthService {
     public void sendNotification(User user) {
 
 
-// admin notification
+
 
         List<User> admins = userRepository.findByRole(Role.ROLE_ADMIN);
 
