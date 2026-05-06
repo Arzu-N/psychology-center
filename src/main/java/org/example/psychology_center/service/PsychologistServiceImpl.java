@@ -7,12 +7,16 @@ import org.example.psychology_center.dto.request.PsychologistRequestDto;
 import org.example.psychology_center.dto.response.PsychologistResponseDto;
 import org.example.psychology_center.exception.NotFoundException;
 import org.example.psychology_center.mapper.PsychologistMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @Service
@@ -20,7 +24,8 @@ import java.util.List;
 public class PsychologistServiceImpl implements PsychologistService{
 private final PsychologistMapper mapper;
     private final PsychologistRepository psychologistRepository;
-
+    @Value("${file.path}")
+private  String path;
     @Override
     public PsychologistResponseDto createPsychologist(PsychologistRequestDto dto) {
         Psychologist psychologistEntity = mapper.toPsychologistEntity(dto);
@@ -51,11 +56,24 @@ private final PsychologistMapper mapper;
     }
 
     public String upload( MultipartFile file) throws IOException {
+        if (file.isEmpty()) {
+            throw new NotFoundException("file not found");
+        }
+
         String originalFilename = file.getOriginalFilename();
-        if (!file.isEmpty()) System.out.printf("file not empty");
-        String path="C:\\Workspacee\\file"+originalFilename;
-        File dest = new File(path);
-        file.transferTo(dest);
-        return "file uploaded successfully "+originalFilename;
+
+        Path uploadPath = Paths.get(path);
+
+
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+
+        Path filePath = uploadPath.resolve(originalFilename);
+
+        Files.write(filePath, file.getBytes());
+
+        return "file uploaded successfully " + originalFilename;
     }
-}
+    }
+

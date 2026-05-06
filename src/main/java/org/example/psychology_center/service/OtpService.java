@@ -1,15 +1,14 @@
 package org.example.psychology_center.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.psychology_center.dao.entity.Otp;
 import org.example.psychology_center.dao.entity.User;
-import org.example.psychology_center.dao.repository.OtpRepository;
 import org.example.psychology_center.dao.repository.UserRepository;
+import org.example.psychology_center.dto.request.Otp;
 import org.example.psychology_center.exception.NotFoundException;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -17,9 +16,10 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class OtpService {
 
-    private final OtpRepository otpRepository;
+
     private final EmailService emailService;
     private final UserRepository userRepository;
+    private final StringRedisTemplate stringRedisTemplate;
 
  private final RedisTemplate<String,Object>redisTemplate;
 
@@ -28,9 +28,14 @@ public class OtpService {
         String key = "otp:" + email;
         String limitKey = "otp:limit:" + email;
 
-
-        if (Boolean.TRUE.equals(redisTemplate.hasKey(limitKey))) {
-            throw new RuntimeException("Çox tez-tez OTP istəyirsən");
+        if (redisTemplate.hasKey(limitKey)){
+            Integer limit = (Integer) redisTemplate.opsForValue().get(limitKey);
+            limit++;
+            if (limit > 3) throw new RuntimeException();
+            redisTemplate.opsForValue().set(limitKey, limit);
+        } else {
+            Integer limit = 1;
+            redisTemplate.opsForValue().set(limitKey, limit,10, TimeUnit.MINUTES);
         }
 
         String code = String.valueOf(new Random().nextInt(900000) + 100000);
@@ -42,12 +47,11 @@ public class OtpService {
 
 
         redisTemplate.opsForValue().set(key, otp, 5, TimeUnit.MINUTES);
-
-
-        redisTemplate.opsForValue().set(limitKey, "1", 1, TimeUnit.MINUTES);
-
         emailService.sendEmail(email, "OTP Code", "Kod: " + code);
+
     }
+
+
     public void verifyOtp(String email, String code) {
 
         String key = "otp:" + email;
@@ -66,7 +70,7 @@ public class OtpService {
         redisTemplate.delete(key);
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("user not found"));
+                .orElseThrow(() -> new NotFoundException("user not found"));
 
         user.setVerified(true);
         userRepository.save(user);
