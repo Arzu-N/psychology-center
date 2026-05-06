@@ -33,10 +33,14 @@ public class PsychologistController {
 }
 
     @PostMapping(value = "/cv/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public String upload(@RequestPart @NotNull MultipartFile file)throws IOException {
-        return service.upload(file);
+    public String uploadCv(@RequestPart @NotNull MultipartFile file)throws IOException {
+        return service.uploadFile(file);
     }
 
+    @PostMapping(value="/image/upload",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public String uploadImage(@RequestPart  @NotNull MultipartFile file)throws IOException{
+    return  service.uploadImage(file);
+    }
 @GetMapping("/{id}")
 public ResponseEntity<PsychologistResponseDto>getPsychologistById(@PathVariable Long id){
     return ResponseEntity.ok(service.getPsychologistById(id));

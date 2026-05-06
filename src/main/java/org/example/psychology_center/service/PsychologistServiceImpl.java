@@ -55,15 +55,45 @@ private  String path;
                 .stream().map(mapper::toPsychologistResponseDto).toList();
     }
 
-    public String upload( MultipartFile file) throws IOException {
-        if (file.isEmpty()) {
-            throw new NotFoundException("file not found");
+        public String uploadFile(MultipartFile file) throws IOException {
+            if (file.isEmpty()) {
+                throw new NotFoundException("file not found");
+            }
+
+            String contentType = file.getContentType();
+
+            if (!"application/pdf".equals(contentType)) {
+                throw new RuntimeException("Only PDF files are allowed");
+            }
+
+            String originalFilename = file.getOriginalFilename();
+
+            Path uploadPath = Paths.get(path, "cv");
+
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            Path filePath = uploadPath.resolve(originalFilename);
+
+            Files.write(filePath, file.getBytes());
+
+            return "CV uploaded successfully: " + originalFilename;
+        }
+    public String uploadImage(MultipartFile image) throws IOException {
+        if (image.isEmpty()) {
+            throw new NotFoundException("image not found not found");
         }
 
-        String originalFilename = file.getOriginalFilename();
+        String contentType = image.getContentType();
 
-        Path uploadPath = Paths.get(path);
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new RuntimeException("fayl formati yalnisdir");
+        }
 
+        String originalFilename = image.getOriginalFilename();
+
+        Path uploadPath = Paths.get(path, "images");
 
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
@@ -71,9 +101,9 @@ private  String path;
 
         Path filePath = uploadPath.resolve(originalFilename);
 
-        Files.write(filePath, file.getBytes());
+        Files.write(filePath, image.getBytes());
 
-        return "file uploaded successfully " + originalFilename;
+        return "Image uploaded successfully: " + originalFilename;
     }
     }
 

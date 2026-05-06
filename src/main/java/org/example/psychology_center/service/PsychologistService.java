@@ -14,5 +14,7 @@ public interface PsychologistService {
     PsychologistResponseDto getPsychologistById(Long id);
     List<PsychologistResponseDto>getBySpecialization(String specialization);
     List<PsychologistResponseDto>getByExperience(Integer experience);
-     String upload( MultipartFile file)throws IOException;
+     String uploadFile( MultipartFile file)throws IOException;
+     String uploadImage(MultipartFile file)throws IOException;
+
 }
