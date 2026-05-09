@@ -8,8 +8,13 @@ import org.example.psychology_center.util.Role;
 
 
 public interface AuthService {
-     void register(RegisterRequest request);
-   AuthResponse login (LoginRequestDto dto);
+    void register(RegisterRequest request);
+
+    AuthResponse login(LoginRequestDto dto);
+
     AuthResponse refreshToken(String refreshToken);
-     void changeRole(Long userId, Role role);
+
+    void changeRole(Long userId, Role role);
+
+     void logout(String refreshToken);
 }

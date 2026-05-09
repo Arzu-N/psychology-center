@@ -14,15 +14,23 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 
+
+
 public class Appointment {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    @ManyToOne
-    User user;
-    @ManyToOne
-    Psychologist psychologist;
-    LocalDateTime appointmentTime;
-    boolean confirmed;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    User user;
+
+    @ManyToOne
+    @JoinColumn(name = "psychologist_id")
+    Psychologist psychologist;
+
+    LocalDateTime appointmentTime;
+
+    boolean confirmed;
 }

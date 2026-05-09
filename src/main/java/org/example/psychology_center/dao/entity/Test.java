@@ -14,11 +14,16 @@ import java.util.List;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Test {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
+
     String title;
 
-    @OneToMany(mappedBy = "test", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "test",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
+            orphanRemoval = true)
     List<Question> questionList;
 }

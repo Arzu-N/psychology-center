@@ -10,6 +10,8 @@ public class PsychologyCenterApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(PsychologyCenterApplication.class, args);
+        System.out.println("APP_PASSWORD=" + System.getenv("APP_PASSWORD"));
+        System.out.println("USERNAME="+System.getenv("MAIL_USERNAME"));
     }
 
 }

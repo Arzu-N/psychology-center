@@ -10,18 +10,27 @@ import org.example.psychology_center.util.Role;
 @NoArgsConstructor
 @Getter
 @Setter
-@Table(name = "user-table")
+@Table(name = "user_table")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
+    @Column(unique = true)
     String userName;
+    String surname;
+
     String fullName;
+
     String password;
+
+    @Column(unique = true)
     String email;
+
     @Enumerated(EnumType.STRING)
     Role role;
+
     boolean verified;
 }

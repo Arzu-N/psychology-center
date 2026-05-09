@@ -16,15 +16,15 @@ public class Notification {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    Long id;
 
-    private String message;
+    String message;
 
-    private boolean isRead;
+    boolean isRead;
 
-    private LocalDateTime createdAt;
+    LocalDateTime createdAt;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    User user;
 }

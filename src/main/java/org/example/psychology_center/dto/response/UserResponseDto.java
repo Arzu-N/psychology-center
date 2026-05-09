@@ -11,7 +11,6 @@ import org.example.psychology_center.util.Role;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserResponseDto {
-    Long id;
     String userName;
     String password;
     Role role;

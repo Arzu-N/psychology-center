@@ -1,28 +1,29 @@
 package org.example.psychology_center.dao.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-@Entity
-@Builder
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@Entity
+@Builder
 public class Psychologist {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
+
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    User user;
+
     String fullName;
     String specialization;
     Integer experience;
     String language;
     String bio;
 
-
+    String cvPath;
+    String imagePath;
 }

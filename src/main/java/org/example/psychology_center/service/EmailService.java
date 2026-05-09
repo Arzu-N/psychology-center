@@ -23,7 +23,11 @@ public class EmailService {
         message.setSubject(subject);
         message.setText(text);
 
-        mailSender.send(message);
+        try {
+            mailSender.send(message);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 

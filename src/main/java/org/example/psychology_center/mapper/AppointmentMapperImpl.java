@@ -21,9 +21,9 @@ public class AppointmentMapperImpl implements AppointmentMapper {
         CustomUserDetails principal = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return Appointment.builder()
                 .user(userRepository.findById(principal.getId())
-                        .orElseThrow(()->new RuntimeException("User not found")))
+                        .orElseThrow(() -> new RuntimeException("User not found")))
                 .psychologist(psychologistRepository.findById(dto.getPsychologistId())
-                        .orElseThrow(()->new RuntimeException("Psychologist not found")))
+                        .orElseThrow(() -> new RuntimeException("Psychologist not found")))
                 .appointmentTime(dto.getAppointmentTime())
                 .confirmed(true)
                 .build();
@@ -31,7 +31,7 @@ public class AppointmentMapperImpl implements AppointmentMapper {
 
     @Override
     public AppointmentResponseDto toAppointmentResponseDto(Appointment entity) {
-       return AppointmentResponseDto.builder()
+        return AppointmentResponseDto.builder()
                 .id(entity.getId())
                 .userId(entity.getUser().getId())
                 .psychologistId(entity.getPsychologist().getId())

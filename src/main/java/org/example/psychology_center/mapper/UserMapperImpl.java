@@ -26,7 +26,6 @@ public class UserMapperImpl implements UserMapper{
     @Override
     public UserResponseDto toUserResponsedto(User entity) {
         return UserResponseDto.builder()
-                .id(entity.getId())
                 .userName(entity.getUserName())
                 .password(entity.getPassword())
                 .role(entity.getRole())

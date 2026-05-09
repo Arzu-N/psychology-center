@@ -14,7 +14,7 @@ import lombok.experimental.FieldDefaults;
 public class PsychologistResponseDto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+
     String fullName;
     String specialization;
     Integer experience;

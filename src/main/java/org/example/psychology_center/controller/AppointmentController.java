@@ -10,27 +10,34 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/appointment/api/v1")
 public class AppointmentController {
+
     private final AppointmentService service;
 
-
-
-    @GetMapping
-    public Page<AppointmentResponseDto> getUserAppointments(
-            @RequestParam int page,
-            @RequestParam int size
+    // USER only
+    @PostMapping("/create")
+    public ResponseEntity<AppointmentResponseDto> createAppointment(
+            @RequestBody @Valid AppointmentRequestDto dto
     ) {
-        return service.getUserAppointments(page, size);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(service.createAppointment(dto));
     }
 
+    // USER + PSYCHOLOGIST
+    @GetMapping("/my")
+    public ResponseEntity<Page<AppointmentResponseDto>> getAppointment(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return ResponseEntity.ok(service.getAppointment(page, size));
+    }
 
-    @PostMapping
-    public AppointmentResponseDto createAppointment(@RequestBody AppointmentRequestDto dto) {
-        return service.createAppointment(dto);
+    // PSYCHOLOGIST confirm
+    @PutMapping("/confirm/{id}")
+    public void confirm(@PathVariable Long id) {
+        service.confirmAppointment(id);
     }
 }

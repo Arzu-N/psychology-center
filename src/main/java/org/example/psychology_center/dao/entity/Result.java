@@ -10,16 +10,20 @@ import lombok.experimental.FieldDefaults;
 @Setter
 @Getter
 @Builder
-@FieldDefaults(level=AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Result {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
+
     int totalScore;
 
     @ManyToOne
+    @JoinColumn(name = "user_id")
     User user;
 
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "test_id")
     Test test;
 }

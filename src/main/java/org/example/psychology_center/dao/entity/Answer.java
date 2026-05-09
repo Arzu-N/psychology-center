@@ -12,11 +12,17 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Answer {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
+
     String text;
-    int score;
-    @OneToOne
+
+    Integer score;
+
+
+    @ManyToOne
+    @JoinColumn(name = "question_id")
     Question question;
 }

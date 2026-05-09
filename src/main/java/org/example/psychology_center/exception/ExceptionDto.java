@@ -1,7 +1,9 @@
 package org.example.psychology_center.exception;
 
-import java.time.LocalDateTime;
+import lombok.Data;
 
+import java.time.LocalDateTime;
+@Data
 public class ExceptionDto {
     String message;
     LocalDateTime time;

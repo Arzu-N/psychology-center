@@ -1,9 +1,6 @@
 package org.example.psychology_center.dto.request;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 @Builder
@@ -13,6 +10,8 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PsychologistRequestDto {
+        @NotNull(message = "userId must not be blank")
+        private Long userId;
         @NotBlank(message="fullName must not be blank")
         String fullName;
         @NotBlank(message = "specialization must not be blank")

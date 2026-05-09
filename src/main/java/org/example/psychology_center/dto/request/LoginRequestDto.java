@@ -10,6 +10,6 @@ import lombok.Setter;
 public class LoginRequestDto {
     @NotBlank
     private String userName;
-@Size(min=6,message = "password length not less than 6")
+    @Size(min = 6, message = "password length not less than 6")
     private String password;
 }

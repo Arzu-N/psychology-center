@@ -2,11 +2,14 @@ package org.example.psychology_center.util;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
+
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
@@ -16,58 +19,61 @@ import java.util.Map;
 @Component
 public class JwtUtil {
 
+   @Value("${jwt.secret}")
+    private String secretKey;
+    @Value("${jwt.expiration}")
+    private long expirationTime;
 
-        @Value("${jwt.secret}")
-        private String secretKey;
+    public String generateToken(String username, Role role) {
 
-        @Value("${jwt.expiration}")
-        private long expirationTime;
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("role", role.name());
 
-        // TOKEN GENERATE
-        public String generateToken(String username, Role role) {
+        return Jwts.builder()
+                .claims(claims)
+                .subject(username)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + expirationTime))
+                .signWith(getSignKey())
+                .compact();
+    }
 
-            Map<String, Object> claims = new HashMap<>();
-            claims.put("role", role); // tokenin içinə role əlavə edirik
 
-            return Jwts.builder()
-                    .setClaims(claims)
-                    .setSubject(username)
-                    .setIssuedAt(new Date())
-                    .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
-                    .signWith(getSignKey(), SignatureAlgorithm.HS256)
-                    .compact();
-        }
+    public String extractUsername(String token) {
+        return extractAllClaims(token).getSubject();
+    }
 
-        // USERNAME EXTRACT
-        public String extractUsername(String token) {
-            return extractAllClaims(token).getSubject();
-        }
 
-        // VALIDATION
-        public boolean isTokenValid(String token, UserDetails userDetails) {
-            final String username = extractUsername(token);
-            return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
-        }
+    public String extractRole(String token) {
+        return extractAllClaims(token).get("role", String.class);
+    }
 
-        // CHECK EXPIRE
-        private boolean isTokenExpired(String token) {
-            return extractAllClaims(token).getExpiration().before(new Date());
-        }
 
-        // CLAIMS
-        private Claims extractAllClaims(String token) {
-            return Jwts.parserBuilder()
-                    .setSigningKey(getSignKey())
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody();
-        }
+    public boolean isTokenValid(String token, UserDetails userDetails) {
+        final String username = extractUsername(token);
+        return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+    }
 
-        // SECRET KEY
-        private Key getSignKey() {
-            byte[] keyBytes = Decoders.BASE64.decode(Base64.getEncoder().encodeToString(secretKey.getBytes()));
-            return Keys.hmacShaKeyFor(keyBytes);
-        }
 
+    private boolean isTokenExpired(String token) {
+        return extractAllClaims(token).getExpiration().before(new Date());
+    }
+
+
+    private Claims extractAllClaims(String token) {
+        return Jwts.parser()
+                .verifyWith(getSignKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+    }
+
+
+    private SecretKey getSignKey() {
+
+      //  byte[] keyBytes = Decoders.BASE64URL.decode(secretKey.trim());
+        byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
 
 }
